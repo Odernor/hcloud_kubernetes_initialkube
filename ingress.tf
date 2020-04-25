@@ -23,8 +23,14 @@ data "hcloud_floating_ip" "kubernetes" {
   with_selector = "ingressip=true"
 }
 
+data "helm_repository" "stable" {
+  name = "stable"
+  url  = "https://kubernetes-charts.storage.googleapis.com"
+}
+
 resource "helm_release" "nginxIngress" {
   name  = "nginx-ingress"
+  repository = data.helm_repository.stable.metadata.0.name
   chart = "stable/nginx-ingress"
 
   namespace = var.ingressNamespace
